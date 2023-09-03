@@ -14,3 +14,18 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./sql/postgres_schema.sql:/docker-entrypoint-initdb.d/postgres_schema.sql
+
+  app:
+    image: cats-inventory:latest
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000:8000"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cats_inventory
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres

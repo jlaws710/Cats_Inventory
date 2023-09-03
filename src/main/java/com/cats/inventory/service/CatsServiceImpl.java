@@ -23,8 +23,8 @@ public class CatsServiceImpl implements CatsService {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Cats> cats = catsRepository.findAll(pageable);
         List<Cats> listOfCats = cats.getContent();
+
         return listOfCats.stream().collect(Collectors.toList());
-        //return (List<Cats>) catsRepository.findAll();
     }
 
     @Override
