@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://0.0.0.0:5432/cats_inventory
+    username: postgres
+    password: postgres
+server:
+  port: 8000
