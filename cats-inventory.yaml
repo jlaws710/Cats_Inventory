@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cats-inventory
+  name: cats-inventory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cats-inventory
+  template:
+    metadata:
+      labels:
+        app: cats-inventory
+    spec:
+      containers:
+        - name: cats-inventory
+          image: cats-inventory:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env: # Setting Enviornmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-conf  # name of configMap
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-conf
+                  key: name
+            - name: POSTGRES_USER  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials # Secret Name
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: postgres_password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cats-inventory
+  labels:
+    name: cats-inventory
+spec:
+  ports:
+    - nodePort: 30163
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app: cats-inventory
+  type: NodePort
